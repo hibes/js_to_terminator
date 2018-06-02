@@ -4,13 +4,14 @@ const util = require("util");
 
 const IND = "  ";
 
-const r = v => i => v.repeat(i);
+const r = value => indentations => value.repeat(indentations);
 
-const indent = i => v => r(IND)(i) + v;
+const indent = indentations => value => r(IND)(indentations) + value;
 
-const tBrackets = v => i => r("[")(i + 1) + v + r("]")(i + 1);
+const tBrackets = value => indentations =>
+  r("[")(indentations + 1) + value + r("]")(indentations + 1);
 
-const jsToTerminator = (obj, i = 0) =>
+const jsToTerminator = (obj, indentations = 0) =>
   Object.keys(obj)
     .map(key => {
       let val = obj[key];
@@ -20,11 +21,11 @@ const jsToTerminator = (obj, i = 0) =>
       let indented;
 
       if (type === "object") {
-        indented = indent(i)(tBrackets(key)(i));
-        val = jsToTerminator(val, i + 1);
+        indented = indent(indentations)(tBrackets(key)(indentations));
+        val = jsToTerminator(val, indentations + 1);
         indented = [indented].concat(val).join("\n");
       } else {
-        indented = indent(i)(`${key} = ${val}`);
+        indented = indent(indentations)(`${key} = ${val}`);
       }
 
       return indented;
